@@ -269,6 +269,21 @@
     hero.style.setProperty("--hero-w", W + "px");
     hero.style.setProperty("--hero-h", H + "px");
 
+    // Secret business-card brick: the first complete brick, top-left of the wall.
+    var cardBrick = document.getElementById("cardBrick");
+    if (cardBrick) {
+      var r0 = Math.ceil((-wallY - 0.5) / ch);
+      var by = wallY + r0 * ch;
+      var xo = (r0 % 2 === 0) ? wallX : wallX + bl / 2;
+      var bx = xo + Math.ceil((-xo - 0.5) / bl) * bl;
+      cardBrick.style.left = bx + "px";
+      cardBrick.style.top = by + "px";
+      cardBrick.style.width = bl + "px";
+      cardBrick.style.height = ch + "px";
+      cardBrick.style.setProperty("--brick-positions",
+        [-bx + "px " + -by + "px", -bx + "px " + -by + "px", (wallX - bx) + "px " + (wallY - by) + "px"].join(", "));
+    }
+
     var maxHalf = 0;
     widths.forEach(function (n) { maxHalf = Math.max(maxHalf, (n / 2) * bl); });
 

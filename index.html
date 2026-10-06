@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261006p3" />
+  <link rel="stylesheet" href="styles.css?v=20261006p4" />
 </head>
 <body>
   <div class="glow-orb glow-orb--cyan" aria-hidden="true"></div>
@@ -97,8 +97,17 @@
         <div class="portal__tip">Knock knock&hellip;</div>
       </div>
       <button type="button" class="portal__btn" id="portalBtn" aria-label="Open the secret door to the videos">Open the secret door</button>
+      <div class="card-brick" id="cardBrick" aria-hidden="true"></div>
+      <button type="button" class="card-brick-btn" id="cardBrickBtn" aria-label="Open Nathe's digital business card">Business card</button>
     </section>
     <div class="portal-flash" id="portalFlash" aria-hidden="true"></div>
+    <div class="bc-modal" id="bcModal" hidden>
+      <div class="bc-dialog" role="dialog" aria-modal="true" aria-labelledby="bcModalTitle">
+        <button type="button" class="bc-close" data-bc-close aria-label="Close business card">&times;</button>
+        <div class="bc-card"></div>
+        <p class="bc-pagelink"><a href="card.html">Open as a page</a> &middot; <button type="button" class="bc-linkbtn" data-bc-close>Back to the wall</button></p>
+      </div>
+    </div>
 
     <!-- Trust strip -->
     <section class="trust" aria-label="Why choose NFS">
@@ -258,6 +267,7 @@
     </div>
   </footer>
 
-  <script src="script.js?v=20261006p3"></script>
+  <script src="script.js?v=20261006p4"></script>
+  <script src="card.js?v=20261006p4"></script>
 </body>
 </html>
