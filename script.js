@@ -233,8 +233,7 @@
     var eb = rel(eyebrow.getBoundingClientRect(), hr);
     var actionsEl = content.querySelector(".hero__actions");
     var ab = rel((actionsEl || slogan).getBoundingClientRect(), hr);
-    var teaser = document.getElementById("portalTeaser");
-    var limit = teaser ? rel(teaser.getBoundingClientRect(), hr).t - 8 : H - 6;
+    var limit = H - 6;
     var cTop = eb.t, cBot = ab.b;
 
     // Door spans pill -> CTA with room for the stepped arch above.
@@ -549,19 +548,13 @@
   });
 
   // ---- Hint: every ~4-5s a bright cyan glow runs part-way round the door
-  //      outline and a few joints pulse; the teaser note glows with it. ----
-  var teaserEl = document.getElementById("portalTeaser");
+  //      outline and a few joints pulse. ----
   var SVGNS = "http://www.w3.org/2000/svg";
 
   function hint() {
     if (busy || !geo || document.hidden) return;
     var hr = hero.getBoundingClientRect();
     if (hr.bottom < 0 || hr.top > window.innerHeight) return;
-    if (teaserEl) {
-      teaserEl.classList.remove("is-glow");
-      void teaserEl.offsetWidth;
-      teaserEl.classList.add("is-glow");
-    }
     if (reduceMotion || !hintPath.animate) return;
     var pts = geo.pts;
     var i0 = Math.floor(Math.random() * pts.length);
