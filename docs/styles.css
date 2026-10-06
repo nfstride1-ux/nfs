@@ -939,3 +939,82 @@ a {
   box-shadow: 0 0 24px rgba(0, 180, 255, 0.2);
 }
 
+
+/* Service cards: photo backgrounds with text on top */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.card__icon {
+  margin-bottom: auto;
+}
+
+.card h3 {
+  margin-top: 1.25rem;
+}
+
+.card--photo {
+  background-color: #0b0f16;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.card--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(5, 7, 11, 0.12) 0%, rgba(5, 7, 11, 0.35) 32%, rgba(5, 7, 11, 0.86) 58%, rgba(5, 7, 11, 0.95) 100%);
+  transition: background 0.2s;
+}
+
+.card--photo h3 {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.card--photo p {
+  color: #e6ecf5;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+.card--photo .card__icon {
+  background: rgba(5, 7, 11, 0.6);
+  border-color: rgba(61, 224, 255, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.card--new-homes {
+  background-image: url("media/services/new-homes.jpg");
+  background-position: center 55%;
+}
+
+.card--extensions {
+  background-image: url("media/services/extensions.jpg");
+  background-position: 70% 85%;
+}
+
+.card--feature-walls {
+  background-image: url("media/services/feature-walls.jpg");
+  background-position: center 45%;
+}
+
+@media (max-width: 639px) {
+  .card {
+    min-height: 240px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card {
+    min-height: 320px;
+  }
+}
