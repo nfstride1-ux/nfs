@@ -461,6 +461,41 @@ a {
   transform: scale(1.04);
 }
 
+/* Inline embeds, cropped to the same 9:14 box as the old previews */
+.reel__thumb iframe {
+  position: absolute;
+  border: 0;
+  display: block;
+  background: #0a0e14;
+}
+
+/* Instagram embed: 54px header + 4:5 media area (height = 1.25 x width).
+   Widen to 124.45% so the media is exactly the box height, centre it,
+   and shift up past the header. */
+.reel__thumb--ig iframe {
+  width: 124.45%;
+  left: -12.22%;
+  top: -54px;
+  height: calc(100% + 54px);
+}
+
+/* 9:16 reels sit pillarboxed inside Instagram's 4:5 area: zoom so the
+   video itself spans the box width, trimming a little top and bottom. */
+.reel__thumb--ig.reel__thumb--tall iframe {
+  width: 142.22%;
+  left: -21.11%;
+  top: calc(-54px - 7.14%);
+  height: calc(54px + 114.29%);
+}
+
+/* Facebook video plugin: 9:16 player, trimmed top/bottom to fit 9:14 */
+.reel__thumb--fb iframe {
+  width: 100%;
+  left: 0;
+  height: 114.29%;
+  top: -7.14%;
+}
+
 .reel__play {
   position: absolute;
   inset: auto auto 0.75rem 0.75rem;
