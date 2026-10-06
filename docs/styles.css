@@ -177,12 +177,24 @@ a {
   align-items: center;
   padding: 3.5rem 1.25rem 4rem;
   background-color: var(--bg-deep);
-  background-image:
-    linear-gradient(180deg, rgba(5, 7, 11, 0.55) 0%, rgba(5, 7, 11, 0.72) 55%, rgba(5, 7, 11, 0.88) 100%),
-    url("nfs-brick-bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  /* Brick wall is a seamless tile made from the original nfs-brick-bg.png bricks,
+     so script.js can line the secret door up with real mortar joints. */
+  background-image: var(--wall-layers);
+  background-size: var(--wall-sizes);
+  background-position: var(--wall-positions);
+  background-repeat: no-repeat, no-repeat, repeat;
+  overflow: hidden;
+  --wall-w: 944px;
+  --wall-x: 50%;
+  --wall-y: 50%;
+  --hero-w: 100%;
+  --hero-h: 100%;
+  --wall-layers:
+    radial-gradient(ellipse 80% 75% at 50% 45%, rgba(5, 7, 11, 0) 45%, rgba(5, 7, 11, 0.55) 100%),
+    linear-gradient(180deg, rgba(5, 7, 11, 0.5) 0%, rgba(5, 7, 11, 0.68) 55%, rgba(5, 7, 11, 0.88) 100%),
+    url("brick-wall.jpg?v=20261006p1");
+  --wall-sizes: var(--hero-w) var(--hero-h), var(--hero-w) var(--hero-h), var(--wall-w) auto;
+  --wall-positions: 0 0, 0 0, var(--wall-x) var(--wall-y);
 }
 
 .hero__grid {
@@ -256,7 +268,7 @@ a {
 }
 
 .hero__lead {
-  margin: 1.35rem auto 0;
+  margin: 2.6rem auto 0;
   max-width: 540px;
   color: var(--text-muted);
   font-size: 1.05rem;
@@ -993,8 +1005,9 @@ a {
 }
 
 .card--new-homes {
-  background-image: url("media/services/new-homes.jpg");
-  background-position: center 55%;
+  background-image: url("media/services/new-homes-build.jpg");
+  background-size: auto 165%;
+  background-position: 42% 88%;
 }
 
 .card--extensions {
@@ -1002,9 +1015,20 @@ a {
   background-position: 70% 85%;
 }
 
+.card--screen-walls {
+  background-image: url("media/services/screen-walls.jpg");
+  background-position: 55% 40%;
+}
+
+.card--letterboxes {
+  background-image: url("media/services/letterboxes.jpg");
+  background-size: 150% auto;
+  background-position: 32% 64%;
+}
+
 .card--feature-walls {
-  background-image: url("media/services/feature-walls.jpg");
-  background-position: center 45%;
+  background-image: url("media/services/feature-wall-recycled.jpg");
+  background-position: 30% 35%;
 }
 
 @media (max-width: 639px) {
@@ -1016,5 +1040,444 @@ a {
 @media (min-width: 1024px) {
   .card {
     min-height: 320px;
+  }
+}
+
+
+/* =========================================================
+   Secret door portal (home hero)
+   ========================================================= */
+.portal {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: none;
+}
+
+.portal.is-ready {
+  display: block;
+}
+
+.portal__hit {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.portal.is-busy .portal__hit {
+  cursor: default;
+}
+
+.portal__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.portal__trace {
+  fill: none;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+  opacity: 0;
+}
+
+.portal__trace--glow {
+  stroke: #1ec8ff;
+  stroke-width: 9;
+}
+
+.portal__trace--core {
+  stroke: #9feeff;
+  stroke-width: 2.4;
+}
+
+.portal__trace--hot {
+  stroke: #ffffff;
+  stroke-width: 3.4;
+  stroke-linecap: round;
+}
+
+.portal.is-tracing .portal__trace,
+.portal.is-open .portal__trace {
+  opacity: 1;
+}
+
+.portal__spark,
+.portal__spark-halo {
+  opacity: 0;
+}
+
+.portal__spark {
+  fill: #fff;
+}
+
+.portal.is-tracing .portal__spark,
+.portal.is-tracing .portal__spark-halo {
+  opacity: 1;
+}
+
+.portal.is-complete .portal__spark,
+.portal.is-complete .portal__spark-halo,
+.portal.is-complete .portal__trace--hot {
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.portal.is-complete .portal__trace--glow {
+  animation: portalPulse 0.42s ease-out 1;
+}
+
+.portal.is-complete .portal__trace--core {
+  animation: portalPulseCore 0.42s ease-out 1;
+}
+
+@keyframes portalPulse {
+  0% { stroke-width: 9; opacity: 1; }
+  40% { stroke-width: 22; opacity: 1; stroke: #9ff0ff; }
+  100% { stroke-width: 10; opacity: 1; }
+}
+
+@keyframes portalPulseCore {
+  0% { stroke: #9feeff; stroke-width: 2.4; }
+  40% { stroke: #ffffff; stroke-width: 4.5; }
+  100% { stroke: #c9f6ff; stroke-width: 2.6; }
+}
+
+/* Faint hint: a short cyan shimmer running along one mortar joint */
+.portal__hint {
+  fill: none;
+  stroke: #3de0ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(61, 224, 255, 0.9));
+}
+
+.portal.is-busy .portal__hint {
+  display: none;
+}
+
+/* Door leaf: a copy of the wall + logo inside the cut-out outline */
+.portal__stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1300px;
+  visibility: hidden;
+}
+
+.portal.is-armed .portal__stage {
+  visibility: visible;
+}
+
+.portal__leaf {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform-origin: 0 50%;
+  transform: rotateY(0deg);
+  will-change: transform;
+}
+
+.portal.is-open .portal__leaf {
+  transform: rotateY(-86deg);
+  transition: transform 1.2s cubic-bezier(0.55, 0.02, 0.28, 1);
+}
+
+.portal__face {
+  position: absolute;
+  inset: 0;
+  background-image: var(--wall-layers);
+  background-size: var(--wall-sizes);
+  background-position: var(--door-positions);
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+
+.portal__face--edge,
+.portal__face--edge2 {
+  filter: brightness(0.45);
+}
+
+.portal__face--edge {
+  transform: translateZ(-7px);
+}
+
+.portal__face--edge2 {
+  transform: translateZ(-14px);
+  filter: brightness(0.3);
+}
+
+.portal__logo {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+}
+
+.portal__logo > * {
+  position: absolute;
+  margin: 0 !important;
+}
+
+.portal__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.6));
+  opacity: 0;
+}
+
+.portal.is-open .portal__shade {
+  opacity: 1;
+  transition: opacity 1.2s ease-in;
+}
+
+/* Light behind the door */
+.portal__light {
+  position: absolute;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 52%, #ffffff 0%, #d9f8ff 22%, #6fe3ff 52%, #0aa6e6 80%, #04628c 100%);
+}
+
+.portal.is-armed .portal__light {
+  opacity: 0;
+}
+
+.portal.is-open .portal__light {
+  opacity: 1;
+  transition: opacity 0.35s ease-out;
+}
+
+.portal__spill {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(61, 224, 255, 0.55), rgba(0, 180, 255, 0.18) 55%, rgba(0, 180, 255, 0) 100%);
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.portal.is-open .portal__spill {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.9s ease-out, transform 1.2s ease-out;
+}
+
+/* Hero bits that are not on the door fade away as it opens */
+.hero.portal-armed .hero__grid {
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.hero.portal-armed .hero__content > .eyebrow,
+.hero.portal-armed .hero__content > .hero__title,
+.hero.portal-armed .hero__content > .hero__slogan {
+  visibility: hidden;
+}
+
+.hero .hero__lead,
+.hero .hero__actions {
+  transition: opacity 0.45s ease;
+}
+
+.hero.portal-opening .hero__lead,
+.hero.portal-opening .hero__actions {
+  opacity: 0;
+}
+
+/* Walking through the doorway */
+.hero.portal-walk {
+  transform: scale(3.2);
+  transition: transform 0.7s cubic-bezier(0.55, 0, 0.9, 0.45);
+}
+
+.portal-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at var(--flash-x, 50%) var(--flash-y, 50%), #ffffff 0%, #dff9ff 25%, #7fe6ff 60%, #1ec8ff 100%);
+}
+
+.portal-flash.is-on {
+  opacity: 1;
+  transition: opacity 0.6s ease-in;
+}
+
+.portal-flash.is-quick {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}
+
+/* Keyboard-only fallback button: invisible until focused */
+.portal__btn {
+  position: absolute;
+  left: 50%;
+  bottom: 1.25rem;
+  z-index: 5;
+  transform: translateX(-50%);
+  padding: 0.45rem 0.95rem;
+  font: 600 0.8rem/1.2 var(--font);
+  letter-spacing: 0.06em;
+  color: var(--cyan-glow);
+  background: rgba(5, 7, 11, 0.85);
+  border: 1px solid rgba(61, 224, 255, 0.5);
+  border-radius: 999px;
+  cursor: pointer;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+.portal__btn:focus-visible {
+  clip-path: none;
+  opacity: 1;
+  outline: 2px solid var(--cyan-glow);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   Videos page ("Behind the door")
+   ========================================================= */
+.vhero {
+  position: relative;
+  z-index: 1;
+  padding: 4.5rem 1.25rem 3rem;
+  text-align: center;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+  background-image:
+    radial-gradient(ellipse 45% 70% at 50% 0%, rgba(61, 224, 255, 0.28), rgba(0, 180, 255, 0.06) 55%, transparent 75%),
+    linear-gradient(180deg, rgba(5, 7, 11, 0.6) 0%, rgba(5, 7, 11, 0.8) 60%, rgba(5, 7, 11, 1) 100%),
+    url("brick-wall.jpg?v=20261006p1");
+  background-size: 100% 100%, 100% 100%, 944px auto;
+  background-position: 0 0, 0 0, center top;
+  background-repeat: no-repeat, no-repeat, repeat;
+  border-bottom: 1px solid var(--border);
+}
+
+.vhero h1 {
+  margin: 0.4rem 0 0.75rem;
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 36px rgba(0, 180, 255, 0.45);
+}
+
+.vhero__lead {
+  margin: 0 auto;
+  max-width: 560px;
+  color: var(--text-muted);
+}
+
+.vhero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1.75rem;
+}
+
+.section--videos {
+  max-width: 1280px;
+  padding-top: 3rem;
+}
+
+.reels--page {
+  grid-template-columns: 1fr;
+  gap: 1.75rem 1.4rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.reels--page .reel h3 {
+  font-size: 1.05rem;
+}
+
+.reels--page .reel__links {
+  font-size: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .reels--page {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 900px) {
+  .reels--page {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1080px;
+  }
+}
+
+.videos-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem 1.25rem;
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.videos-foot .reels__more {
+  width: 100%;
+  margin: 0 0 0.5rem;
+}
+
+.nav__links a[aria-current="page"] {
+  color: var(--cyan-glow);
+}
+
+/* Entrance after walking through the door */
+.portal-enter-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, #ffffff 0%, #dff9ff 25%, #7fe6ff 60%, #1ec8ff 100%);
+  opacity: 0;
+  display: none;
+}
+
+html.portal-enter .portal-enter-glow {
+  display: block;
+  opacity: 1;
+}
+
+html.portal-enter.portal-entered .portal-enter-glow {
+  opacity: 0;
+  transition: opacity 0.9s ease-out;
+}
+
+html.portal-enter main {
+  transform: scale(1.08);
+  filter: blur(6px);
+}
+
+html.portal-enter.portal-entered main {
+  transform: none;
+  filter: none;
+  transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.9s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal.is-open .portal__leaf,
+  .hero.portal-walk {
+    transition: none;
+  }
+
+  html.portal-enter main {
+    transform: none;
+    filter: none;
+  }
+
+  html.portal-enter.portal-entered .portal-enter-glow {
+    transition: opacity 0.3s;
   }
 }

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261006" />
+  <link rel="stylesheet" href="styles.css?v=20261006p1" />
 </head>
 <body>
   <div class="glow-orb glow-orb--cyan" aria-hidden="true"></div>
@@ -26,7 +26,7 @@
       </button>
       <nav class="nav__links" id="navLinks">
         <a href="#services">Services</a>
-        <a href="#watch">Watch</a>
+        <a href="videos.html" data-portal-trigger>Watch</a>
         <a href="#about">About</a>
         <a href="#contact">Quote</a>
         <a class="nav__cta" href="#contact">Request a quote</a>
@@ -53,7 +53,44 @@
           <a class="btn btn--primary" href="#contact">Request a quote</a>
         </div>
       </div>
+
+      <!-- Secret door portal (built by script.js around the logo) -->
+      <div class="portal" id="portal" aria-hidden="true">
+        <div class="portal__light"></div>
+        <div class="portal__spill"></div>
+        <div class="portal__stage">
+          <div class="portal__leaf">
+            <div class="portal__face portal__face--edge2"></div>
+            <div class="portal__face portal__face--edge"></div>
+            <div class="portal__face portal__face--front">
+              <div class="portal__logo"></div>
+              <div class="portal__shade"></div>
+            </div>
+          </div>
+        </div>
+        <svg class="portal__svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="portalBlur" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="5" />
+            </filter>
+            <radialGradient id="portalSpark">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="0.35" stop-color="#9ff0ff" stop-opacity="0.85" />
+              <stop offset="1" stop-color="#1ec8ff" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <path class="portal__hint" d="" />
+          <path class="portal__trace portal__trace--glow" d="" filter="url(#portalBlur)" />
+          <path class="portal__trace portal__trace--core" d="" />
+          <path class="portal__trace portal__trace--hot" d="" />
+          <circle class="portal__spark-halo" r="18" fill="url(#portalSpark)" cx="-99" cy="-99" />
+          <circle class="portal__spark" r="3.2" cx="-99" cy="-99" />
+        </svg>
+        <div class="portal__hit"></div>
+      </div>
+      <button type="button" class="portal__btn" id="portalBtn" aria-label="Open the secret door to the videos">Open the secret door</button>
     </section>
+    <div class="portal-flash" id="portalFlash" aria-hidden="true"></div>
 
     <!-- Trust strip -->
     <section class="trust" aria-label="Why choose NFS">
@@ -95,12 +132,12 @@
           <h3>Extensions &amp; renovations</h3>
           <p>Seamless brick matching and structural work for extensions and home renovations that look like they always belonged.</p>
         </article>
-        <article class="card">
+        <article class="card card--photo card--screen-walls">
           <div class="card__icon" aria-hidden="true">▤</div>
           <h3>Screen walls &amp; fences</h3>
           <p>Brick screen walls, boundary fences, and returns built straight, solid, and suited to WA conditions.</p>
         </article>
-        <article class="card">
+        <article class="card card--photo card--letterboxes">
           <div class="card__icon" aria-hidden="true">⊡</div>
           <h3>Letterboxes</h3>
           <p>Custom brick letterboxes that match your home — clean finish, solid build, free quotes.</p>
@@ -116,63 +153,6 @@
           <p>Crack repairs, rebuilds, and corrective bricklaying that restores strength and appearance.</p>
         </article>
       </div>
-    </section>
-
-
-    <!-- Watch / Reels -->
-    <section class="section" id="watch">
-      <div class="section__head">
-        <p class="eyebrow">On the tools</p>
-        <h2>Watch the work</h2>
-        <p class="section__lead">Short clips from the job — tap a clip to play it right here.</p>
-      </div>
-      <div class="reels">
-        <article class="reel">
-          <div class="reel__thumb reel__thumb--ig reel__thumb--tall">
-            <iframe src="https://www.instagram.com/reel/DeByKVUh-LA/embed" title="Brick pier reel" loading="lazy" scrolling="no" allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; web-share; fullscreen" allowfullscreen></iframe>
-          </div>
-          <h3>Brick pier check</h3>
-          <div class="reel__links">
-            <a href="https://www.instagram.com/reel/DeByKVUh-LA/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://www.facebook.com/reel/1584289016494330" target="_blank" rel="noopener noreferrer">Facebook</a>
-          </div>
-        </article>
-        <article class="reel">
-          <div class="reel__thumb reel__thumb--ig reel__thumb--tall">
-            <iframe src="https://www.instagram.com/reel/DdoMpMghxp1/embed" title="Freehand planter reel" loading="lazy" scrolling="no" allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; web-share; fullscreen" allowfullscreen></iframe>
-          </div>
-          <h3>Freehand planter in 30 min</h3>
-          <div class="reel__links">
-            <a href="https://www.instagram.com/reel/DdoMpMghxp1/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://www.facebook.com/reel/1465141355670410" target="_blank" rel="noopener noreferrer">Facebook</a>
-          </div>
-        </article>
-        <article class="reel">
-          <div class="reel__thumb reel__thumb--ig">
-            <iframe src="https://www.instagram.com/reel/DdJ2-VHFSMq/embed" title="Walls and door frame reel" loading="lazy" scrolling="no" allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; web-share; fullscreen" allowfullscreen></iframe>
-          </div>
-          <h3>Walls &amp; door frame</h3>
-          <div class="reel__links">
-            <a href="https://www.instagram.com/reel/DdJ2-VHFSMq/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://www.facebook.com/reel/2707150116354052" target="_blank" rel="noopener noreferrer">Facebook</a>
-          </div>
-        </article>
-        <article class="reel">
-          <div class="reel__thumb reel__thumb--fb">
-            <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1512886067145455&amp;show_text=false" title="Brick room through frame reel" loading="lazy" scrolling="no" allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; web-share; fullscreen" allowfullscreen></iframe>
-          </div>
-          <h3>Through the frame</h3>
-          <div class="reel__links">
-            <a href="https://www.facebook.com/reel/1512886067145455" target="_blank" rel="noopener noreferrer">Facebook</a>
-          </div>
-        </article>
-      </div>
-      <p class="reels__more">
-        More on
-        <a href="https://www.instagram.com/nfsbricklaying/" target="_blank" rel="noopener noreferrer">Instagram</a>
-        and
-        <a href="https://www.facebook.com/Nfsbricklaying" target="_blank" rel="noopener noreferrer">Facebook</a>.
-      </p>
     </section>
 
     <!-- About -->
@@ -270,6 +250,6 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=20261006p1"></script>
 </body>
 </html>
