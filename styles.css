@@ -485,10 +485,33 @@ a {
    Widen to 124.45% so the media is exactly the box height, centre it,
    and shift up past the header. */
 .reel__thumb--ig iframe {
-  width: 124.45%;
-  left: -12.22%;
+  width: 126.5%;
+  left: -13.25%;
   top: -54px;
-  height: calc(100% + 54px);
+  height: calc(100% + 54px + 48px);
+}
+
+/* Transparent shields over the top and bottom edges of each reel so
+   Instagram's cropped header/footer profile links never get hovered
+   (that pops up its profile hover card). The middle stays tappable. */
+.reel__thumb--ig::before,
+.reel__thumb--ig::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background: transparent;
+}
+
+.reel__thumb--ig::before {
+  top: 0;
+  height: 12px;
+}
+
+.reel__thumb--ig::after {
+  bottom: 0;
+  height: 22px;
 }
 
 /* 9:16 reels sit pillarboxed inside Instagram's 4:5 area: zoom so the
