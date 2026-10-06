@@ -7,8 +7,8 @@
   <title>NFS Bricklaying | Built with Pride</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261006p2" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20261006p3" />
 </head>
 <body>
   <div class="glow-orb glow-orb--cyan" aria-hidden="true"></div>
@@ -52,6 +52,10 @@
         <div class="hero__actions">
           <a class="btn btn--primary" href="#contact">Request a quote</a>
         </div>
+        <p class="hero__teaser" id="portalTeaser">
+          <svg class="hero__teaser-icon" viewBox="0 0 16 22" aria-hidden="true"><circle cx="8" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 11h4l1.6 8.5H4.4z" fill="currentColor"/></svg>
+          <span>Psst&hellip; there&rsquo;s a secret door in this wall. <span class="teaser--mouse">Find it.</span><span class="teaser--touch">Tap it.</span></span>
+        </p>
       </div>
 
       <!-- Secret door portal (built by script.js around the logo) -->
@@ -79,6 +83,9 @@
               <stop offset="1" stop-color="#1ec8ff" stop-opacity="0" />
             </radialGradient>
           </defs>
+          <path class="portal__ghost" d="" />
+          <g class="portal__pulses"></g>
+          <path class="portal__hint-trail" d="" />
           <path class="portal__hint" d="" />
           <path class="portal__trace portal__trace--glow" d="" filter="url(#portalBlur)" />
           <path class="portal__trace portal__trace--core" d="" />
@@ -87,6 +94,7 @@
           <circle class="portal__spark" r="3.2" cx="-99" cy="-99" />
         </svg>
         <div class="portal__hit"></div>
+        <div class="portal__tip">Knock knock&hellip;</div>
       </div>
       <button type="button" class="portal__btn" id="portalBtn" aria-label="Open the secret door to the videos">Open the secret door</button>
     </section>
@@ -250,6 +258,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=20261006p2"></script>
+  <script src="script.js?v=20261006p3"></script>
 </body>
 </html>

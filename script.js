@@ -154,10 +154,6 @@
   var DEST = "videos.html";
   var TILE_COLS = 8;            // bricks across brick-wall.jpg
   var BRICK_RATIO = 55 / 180;   // course height / brick length (incl. joints)
-  /* Door profile from the top course down, in whole bricks across.
-     Even counts sit on a head joint at the centre line, odd counts on
-     the courses in between (stretcher bond) -> stepped, toothed jambs. */
-  var PROFILE_TOP = [2, 3];
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var svg = portal.querySelector(".portal__svg");
@@ -165,6 +161,10 @@
   var corePath = portal.querySelector(".portal__trace--core");
   var hotPath = portal.querySelector(".portal__trace--hot");
   var hintPath = portal.querySelector(".portal__hint");
+  var trailPath = portal.querySelector(".portal__hint-trail");
+  var ghostPath = portal.querySelector(".portal__ghost");
+  var pulses = portal.querySelector(".portal__pulses");
+  var tip = portal.querySelector(".portal__tip");
   var spark = portal.querySelector(".portal__spark");
   var halo = portal.querySelector(".portal__spark-halo");
   var hit = portal.querySelector(".portal__hit");
@@ -207,52 +207,68 @@
     var H = hero.clientHeight;
     if (!W || !H) return;
 
-    var eb = rel(eyebrow.getBoundingClientRect(), hr);
-    var tb = rel(title.getBoundingClientRect(), hr);
-    var sb = rel(slogan.getBoundingClientRect(), hr);
-    var brand = rel(textBox(title.querySelector(".hero__brand") || title), hr);
-    var sub = rel(textBox(title.querySelector(".hero__sub") || title), hr);
-    var slog = rel(textBox(slogan), hr);
-    var logoW = Math.max(eb.w, brand.w, sub.w, slog.w);
-    var blockT = eb.t;
-    var blockB = sb.b;
     var cx = Math.round(W / 2);
+    var slog0 = textBox(slogan);
+    var logoW = Math.max(eyebrow.getBoundingClientRect().width,
+      textBox(title.querySelector(".hero__brand") || title).width,
+      textBox(title.querySelector(".hero__sub") || title).width, slog0.width);
 
-    // Brick length: the narrow (3-brick) courses must clear the logo,
-    // the wide (4-brick) courses must fit on screen.
+    // Door size: narrow courses N bricks, wide courses N+1 (stretcher bond),
+    // N grows with the screen. Bricks sized so the wide courses fit on screen.
+    var N = W >= 1100 ? 5 : W >= 700 ? 4 : 3;
     var pad = Math.max(10, Math.min(26, logoW * 0.06));
     var bl = (logoW + pad * 2) / 3;
-    bl = Math.min(bl, (W - 16) / 4, 132);
-    bl = Math.max(bl, 60);
+    bl = Math.min(bl, (W - 28) / (N + 1), 132);
+    bl = Math.max(bl, 56);
     var ch = bl * BRICK_RATIO;
 
-    // Door height ~1.45x the logo block, centred on it, kept clear of the lead text.
-    var limit = lead ? lead.getBoundingClientRect().top - hr.top - 6 : H - 6;
-    var rows = Math.max(7, Math.round(((blockB - blockT) * 1.45) / ch));
-    rows = Math.max(6, Math.min(rows, Math.floor((limit - 6) / ch)));
-    var doorH = rows * ch;
-    var mid = (blockT + blockB) / 2;
-    var top = mid - doorH / 2;
-    if (top + doorH > limit) top = limit - doorH;
-    top = Math.max(top, 6);
+    // Keep the intro text inside the narrow courses so it rides on the door.
+    if (lead) {
+      var inner = N * bl - Math.max(24, bl * 0.34);
+      lead.style.maxWidth = Math.round(Math.min(540, inner)) + "px";
+    }
+    hr = hero.getBoundingClientRect();
+    H = hero.clientHeight;
 
-    // Align the tile: a head joint on the centre line in the top course,
-    // and a bed joint exactly on the door top.
+    var eb = rel(eyebrow.getBoundingClientRect(), hr);
+    var actionsEl = content.querySelector(".hero__actions");
+    var ab = rel((actionsEl || slogan).getBoundingClientRect(), hr);
+    var teaser = document.getElementById("portalTeaser");
+    var limit = teaser ? rel(teaser.getBoundingClientRect(), hr).t - 8 : H - 6;
+    var cTop = eb.t, cBot = ab.b;
+
+    // Door spans pill -> CTA with room for the stepped arch above.
+    var archRows = Math.max(0, (N + 1) - Math.max(2, N - 2));
+    var mTop = ch * (archRows * 0.55 + 0.4);
+    var mBot = ch * 0.9;
+    var rows = Math.ceil((cBot + mBot - (cTop - mTop)) / ch);
+    rows = Math.max(7, Math.min(rows, Math.floor((limit - 4) / ch)));
+    var doorH = rows * ch;
+    var top = cBot + mBot - doorH;
+    if (top + doorH > limit) top = limit - doorH;
+    top = Math.max(top, 4);
+
+    // Course widths: stepped arch up to N+1, then N / N+1 alternating.
+    var widths = [];
+    var wv = Math.max(2, N - 2);
+    for (var i = 0; i < rows; i++) {
+      if (wv < N + 1 && i > 0) wv++;
+      else if (i > 0) wv = widths[i - 1] === N + 1 ? N : N + 1;
+      widths.push(wv);
+    }
+
+    // Align the tile: bed joint on the door top; a head joint on the
+    // centre line in courses with an even brick count.
     var tileW = bl * TILE_COLS;
     var wallX = cx - Math.ceil(cx / bl) * bl;
     var wallY = top - Math.ceil(top / (2 * ch)) * 2 * ch;
+    if (widths[0] % 2 === 1) wallY -= ch;
     hero.style.setProperty("--wall-w", tileW + "px");
     hero.style.setProperty("--wall-x", wallX + "px");
     hero.style.setProperty("--wall-y", wallY + "px");
     hero.style.setProperty("--hero-w", W + "px");
     hero.style.setProperty("--hero-h", H + "px");
 
-    // Course widths (bricks) top -> bottom: 2, 3, then 4/3 alternating.
-    var widths = [];
-    for (var i = 0; i < rows; i++) {
-      if (i < PROFILE_TOP.length) widths.push(PROFILE_TOP[i]);
-      else widths.push((i - PROFILE_TOP.length) % 2 === 0 ? 4 : 3);
-    }
     var maxHalf = 0;
     widths.forEach(function (n) { maxHalf = Math.max(maxHalf, (n / 2) * bl); });
 
@@ -292,7 +308,9 @@
       "--door-positions",
       [-box.l + "px " + -box.t + "px", -box.l + "px " + -box.t + "px", (wallX - box.l) + "px " + (wallY - box.t) + "px"].join(", ")
     );
-    portal.querySelector(".portal__stage").style.perspectiveOrigin = (box.l + box.w / 2) + "px " + (box.t + box.h / 2) + "px";
+    var stage = portal.querySelector(".portal__stage");
+    stage.style.perspectiveOrigin = (box.l + box.w / 2) + "px " + (box.t + box.h / 2) + "px";
+    stage.style.perspective = Math.max(1300, box.w * 2.6) + "px";
 
     var sw = box.w * 2.2;
     spill.style.width = sw + "px";
@@ -302,12 +320,13 @@
 
     // Generous, invisible hit area around the door.
     var px = bl * 0.3;
-    var py = ch * 0.6;
+    var py = ch * 0.5;
     var hl = Math.max(0, box.l - px), ht = Math.max(0, box.t - py);
     hit.style.left = hl + "px";
     hit.style.top = ht + "px";
     hit.style.width = (Math.min(W, box.l + box.w + px) - hl) + "px";
-    hit.style.height = (Math.min(H, box.t + box.h + py) - ht) + "px";
+    hit.style.height = (Math.min(H, limit, box.t + box.h + py) - ht) + "px";
+    ghostPath.setAttribute("d", pathFrom({ i: 0, p: pts[0] }).d + " Z");
 
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     portal.classList.add("is-ready");
@@ -363,7 +382,8 @@
   function buildLogoClone() {
     logoHolder.innerHTML = "";
     var lr = leaf.getBoundingClientRect();
-    [eyebrow, title, slogan].forEach(function (el) {
+    [eyebrow, title, slogan, lead, content.querySelector(".hero__actions")].forEach(function (el) {
+      if (!el) return;
       var r = el.getBoundingClientRect();
       var c = el.cloneNode(true);
       c.removeAttribute("id");
@@ -395,6 +415,8 @@
     if (!geo) layout();
     if (!geo) { go(); return; }
     busy = true;
+    clearTimeout(tipTimer);
+    portal.classList.remove("is-hover", "show-tip");
     portal.classList.add("is-busy");
 
     if (reduceMotion) {
@@ -511,40 +533,74 @@
     a.addEventListener("click", openFromNav);
   });
 
-  // ---- Hint: a faint cyan shimmer along one joint of the door every ~7s ----
-  function shimmer() {
+  // ---- Hint: every ~4-5s a bright cyan glow runs part-way round the door
+  //      outline and a few joints pulse; the teaser note glows with it. ----
+  var teaserEl = document.getElementById("portalTeaser");
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  function hint() {
     if (busy || !geo || document.hidden) return;
     var hr = hero.getBoundingClientRect();
     if (hr.bottom < 0 || hr.top > window.innerHeight) return;
+    if (teaserEl) {
+      teaserEl.classList.remove("is-glow");
+      void teaserEl.offsetWidth;
+      teaserEl.classList.add("is-glow");
+    }
+    if (reduceMotion || !hintPath.animate) return;
     var pts = geo.pts;
-    // prefer longer runs (bed joints along the top/bottom, tall jamb steps)
-    var i = Math.floor(Math.random() * pts.length);
-    var a = pts[i], b = pts[(i + 1) % pts.length];
-    var len = Math.abs(b[0] - a[0]) + Math.abs(b[1] - a[1]);
-    if (len < geo.ch * 1.2) { b = pts[(i + 2) % pts.length]; len += Math.abs(b[0] - pts[(i + 1) % pts.length][0]) + Math.abs(b[1] - pts[(i + 1) % pts.length][1]); }
-    var mid = pts[(i + 1) % pts.length];
-    hintPath.setAttribute("d", "M" + a[0] + " " + a[1] + " L" + mid[0] + " " + mid[1] + (b !== mid ? " L" + b[0] + " " + b[1] : ""));
-    var dash = Math.max(18, len * 0.35);
-    if (hintPath.animate) {
-      hintPath.style.strokeDasharray = dash + " " + (len + dash);
-      hintPath.animate(
-        reduceMotion
-          ? [{ opacity: 0, strokeDashoffset: -len * 0.3 }, { opacity: 0.35, strokeDashoffset: -len * 0.3 }, { opacity: 0, strokeDashoffset: -len * 0.3 }]
-          : [{ opacity: 0, strokeDashoffset: dash }, { opacity: 0.55, offset: 0.35 }, { opacity: 0.4, offset: 0.7 }, { opacity: 0, strokeDashoffset: -len }],
-        { duration: reduceMotion ? 1600 : 1500, easing: "ease-in-out" }
-      );
+    var i0 = Math.floor(Math.random() * pts.length);
+    var route = pathFrom({ i: i0, p: pts[i0] });
+    var L = route.len;
+    var run = L * (0.22 + Math.random() * 0.08);
+    var dash = Math.min(L * 0.06, geo.bl * 1.1);
+    hintPath.setAttribute("d", route.d);
+    trailPath.setAttribute("d", route.d);
+    hintPath.style.strokeDasharray = dash + " " + (L + dash);
+    trailPath.style.strokeDasharray = run + " " + (L + run);
+    var dur = 1700;
+    hintPath.animate(
+      [{ strokeDashoffset: dash, opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 1, offset: 0.8 }, { strokeDashoffset: -(run - dash), opacity: 0 }],
+      { duration: dur, easing: "cubic-bezier(.4,0,.3,1)", fill: "both" }
+    );
+    trailPath.animate(
+      [{ strokeDashoffset: run, opacity: 0.85 }, { strokeDashoffset: 0, opacity: 0.8, offset: 0.7 }, { strokeDashoffset: 0, opacity: 0 }],
+      { duration: dur + 500, easing: "cubic-bezier(.4,0,.3,1)", fill: "both" }
+    );
+    // a few joints of the door pulse
+    for (var k = 0; k < 4; k++) {
+      var j = Math.floor(Math.random() * pts.length);
+      var p1 = pts[j], p2 = pts[(j + 1) % pts.length];
+      var el = document.createElementNS(SVGNS, "path");
+      el.setAttribute("d", "M" + p1[0] + " " + p1[1] + " L" + p2[0] + " " + p2[1]);
+      pulses.appendChild(el);
+      var an = el.animate([{ opacity: 0 }, { opacity: 1 }, { opacity: 0 }],
+        { duration: 1100, delay: 250 + k * 260, easing: "ease-in-out", fill: "both" });
+      an.onfinish = (function (node) { return function () { node.remove(); }; })(el);
     }
   }
 
-  function scheduleShimmer() {
-    setTimeout(function () { shimmer(); scheduleShimmer(); }, 6000 + Math.random() * 2000);
+  function scheduleHint() {
+    setTimeout(function () { hint(); scheduleHint(); }, 4000 + Math.random() * 1000);
   }
 
-  var lastHoverHint = 0;
+  // Desktop hover: outline glows all round + a little "Knock knock..." tip.
+  var tipTimer = null;
   hit.addEventListener("mouseenter", function () {
-    var now = Date.now();
-    if (now - lastHoverHint > 4000) { lastHoverHint = now; shimmer(); }
+    if (busy) return;
+    portal.classList.add("is-hover");
+    clearTimeout(tipTimer);
+    tipTimer = setTimeout(function () { portal.classList.add("show-tip"); }, 450);
   });
+  hit.addEventListener("mousemove", function (e) {
+    var hr = hero.getBoundingClientRect();
+    tip.style.transform = "translate(" + (e.clientX - hr.left + 16) + "px," + (e.clientY - hr.top + 18) + "px)";
+  });
+  hit.addEventListener("mouseleave", function () {
+    clearTimeout(tipTimer);
+    portal.classList.remove("is-hover", "show-tip");
+  });
+  if (reduceMotion) portal.classList.add("is-reduced");
 
   // ---- Layout lifecycle ----
   var rt;
@@ -558,8 +614,7 @@
   layout();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   window.addEventListener("load", layout);
-  setTimeout(shimmer, 2500);
-  scheduleShimmer();
+  setTimeout(function () { hint(); scheduleHint(); }, 1500);
 
   // test hook
   window.__nfsPortal = { open: open, layout: layout, geo: function () { return geo; } };

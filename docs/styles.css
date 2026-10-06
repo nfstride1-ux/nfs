@@ -268,7 +268,8 @@ a {
 }
 
 .hero__lead {
-  margin: 2.6rem auto 0;
+  text-wrap: balance;
+  margin: 1.6rem auto 0;
   max-width: 540px;
   color: var(--text-muted);
   font-size: 1.05rem;
@@ -1171,14 +1172,151 @@ a {
   100% { stroke: #c9f6ff; stroke-width: 2.6; }
 }
 
-/* Faint hint: a short cyan shimmer running along one mortar joint */
-.portal__hint {
+/* Hint: bright glow running part-way round the outline, trail + joint pulses */
+.portal__hint,
+.portal__hint-trail,
+.portal__ghost,
+.portal__pulses path {
   fill: none;
-  stroke: #3de0ff;
-  stroke-width: 2;
   stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 0;
-  filter: drop-shadow(0 0 4px rgba(61, 224, 255, 0.9));
+}
+
+.portal__hint {
+  stroke: #e6fbff;
+  stroke-width: 3.2;
+  filter: drop-shadow(0 0 4px #3de0ff) drop-shadow(0 0 10px rgba(30, 200, 255, 0.85));
+}
+
+.portal__hint-trail {
+  stroke: #6fe6ff;
+  stroke-width: 2.6;
+  filter: drop-shadow(0 0 6px rgba(30, 200, 255, 0.8));
+}
+
+.portal__pulses path {
+  stroke: #a8f1ff;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 6px rgba(61, 224, 255, 0.9));
+}
+
+/* Hover: the whole outline glows faintly */
+.portal__ghost {
+  stroke: #3de0ff;
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0 5px rgba(30, 200, 255, 0.8));
+  transition: opacity 0.4s ease;
+}
+
+.portal.is-hover .portal__ghost {
+  opacity: 0.6;
+}
+
+.portal.is-reduced .portal__ghost {
+  opacity: 0.22;
+}
+
+.portal.is-reduced.is-hover .portal__ghost {
+  opacity: 0.6;
+}
+
+.portal.is-busy .portal__ghost,
+.portal.is-busy .portal__pulses,
+.portal.is-busy .portal__hint-trail {
+  display: none;
+}
+
+.portal__tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.25rem 0.6rem;
+  font: 700 1.05rem/1.2 "Caveat", "Inter", cursive;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+  background: rgba(5, 7, 11, 0.82);
+  border: 1px solid rgba(255, 138, 61, 0.45);
+  border-radius: 8px;
+  box-shadow: 0 0 14px rgba(255, 138, 61, 0.18);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.portal.show-tip .portal__tip {
+  opacity: 1;
+}
+
+.portal.is-busy .portal__tip {
+  display: none;
+}
+
+/* Teaser note under the CTA */
+.hero__actions,
+.hero__teaser {
+  position: relative;
+  z-index: 4;
+}
+
+.hero__teaser {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem auto 0;
+  padding: 0.35rem 0.95rem 0.4rem;
+  font-family: "Caveat", "Inter", cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--gold);
+  border: 1px dashed rgba(255, 138, 61, 0.5);
+  border-radius: 999px;
+  background: rgba(5, 7, 11, 0.55);
+  transform: rotate(-1.5deg);
+  text-shadow: 0 0 10px rgba(255, 138, 61, 0.25);
+  transition: opacity 0.4s ease;
+}
+
+.hero__teaser-icon {
+  width: 0.8rem;
+  height: 1.1rem;
+  flex: none;
+  color: var(--cyan-glow);
+  filter: drop-shadow(0 0 4px rgba(61, 224, 255, 0.8));
+}
+
+.hero__teaser.is-glow {
+  animation: teaserGlow 1.8s ease-in-out 1;
+}
+
+@keyframes teaserGlow {
+  0%, 100% { border-color: rgba(255, 138, 61, 0.5); box-shadow: none; }
+  40% { border-color: rgba(255, 170, 110, 0.95); box-shadow: 0 0 18px rgba(255, 138, 61, 0.35); }
+}
+
+.teaser--touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .teaser--mouse { display: none; }
+  .teaser--touch { display: inline; }
+}
+
+.hero.portal-opening .hero__teaser {
+  opacity: 0;
+}
+
+@media (max-width: 480px) {
+  .hero__teaser {
+    max-width: 300px;
+    font-size: 1.18rem;
+    padding: 0.4rem 0.9rem 0.45rem;
+    border-radius: 16px;
+    text-align: center;
+  }
 }
 
 .portal.is-busy .portal__hint {
@@ -1295,7 +1433,9 @@ a {
 
 .hero.portal-armed .hero__content > .eyebrow,
 .hero.portal-armed .hero__content > .hero__title,
-.hero.portal-armed .hero__content > .hero__slogan {
+.hero.portal-armed .hero__content > .hero__slogan,
+.hero.portal-armed .hero__content > .hero__lead,
+.hero.portal-armed .hero__content > .hero__actions {
   visibility: hidden;
 }
 
@@ -1304,10 +1444,7 @@ a {
   transition: opacity 0.45s ease;
 }
 
-.hero.portal-opening .hero__lead,
-.hero.portal-opening .hero__actions {
-  opacity: 0;
-}
+
 
 /* Walking through the doorway */
 .hero.portal-walk {
