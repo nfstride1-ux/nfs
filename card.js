@@ -3,11 +3,11 @@
 (function () {
   "use strict";
 
-  var CARD_URL = "https://nfstride1-ux.github.io/nfs/card.html";
+  var CARD_URL = "https://nfsbricklaying.org/card.html";
   var PHONE_DISPLAY = "0408 941 768";
   var PHONE_INTL = "+61408941768";
   var EMAIL = "nstride@nfsbricklaying.org";
-  var SITE = "https://nfstride1-ux.github.io/nfs/";
+  var SITE = "https://nfsbricklaying.org/";
   var FB = "https://www.facebook.com/Nfsbricklaying";
   var IG = "https://www.instagram.com/nfsbricklaying/";
   var FORM_AJAX = "https://formsubmit.co/ajax/" + EMAIL;
@@ -48,7 +48,7 @@
         '<ul class="bc-list">' +
           '<li><a href="tel:' + PHONE_INTL + '">' + ic("phone") + '<span>' + PHONE_DISPLAY + '</span></a></li>' +
           '<li><a href="mailto:' + EMAIL + '">' + ic("mail") + '<span>' + EMAIL + '</span></a></li>' +
-          '<li><a href="' + SITE + '" target="_blank" rel="noopener">' + ic("web") + '<span>nfstride1-ux.github.io/nfs</span></a></li>' +
+          '<li><a href="' + SITE + '" target="_blank" rel="noopener">' + ic("web") + '<span>nfsbricklaying.org</span></a></li>' +
           '<li><a href="' + FB + '" target="_blank" rel="noopener noreferrer">' + ic("fb") + '<span>facebook.com/Nfsbricklaying</span></a></li>' +
           '<li><a href="' + IG + '" target="_blank" rel="noopener noreferrer">' + ic("ig") + '<span>@nfsbricklaying</span></a></li>' +
           '<li><span class="bc-static">' + ic("pin") + '<span>Golden Bay &amp; South of the River, Perth</span></span></li>' +
