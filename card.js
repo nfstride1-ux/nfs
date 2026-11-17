@@ -255,6 +255,7 @@
   modal.addEventListener("click", function (e) {
     if (e.target === modal || e.target.closest("[data-bc-close]")) closeCard();
     if (e.target.closest("[data-bc-quote]")) closeCard();
+    if (e.target.closest("[data-bc-openpage]")) { window.location.href = "card.html"; }
   });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") closeCard();
